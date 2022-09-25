@@ -20,7 +20,7 @@ typedef struct Node{
 
 typedef struct{
 	Node* head;
-	Node* cur;
+	Node* tail;
 } LList;
 
 // Do not define in header, only used by other saveManager functions
@@ -53,23 +53,33 @@ LList* makeList(uint16_t dfBytes, uint8_t* data){
 	}
 
 	newList->head = newNode;
-	newList->cur = newNode;
+	newList->tail = newNode;
 
 	return newList;
 }
 
-// Add a Node of given params to top of list
-Node* push(LList* list, uint16_t dfBytes, uint8_t* data){
+// Insert a Node of given params before the head of list
+Node* insertHead(LList* list, uint16_t dfBytes, uint8_t* data){
+	Node* oldHead = list->head;
 	Node* newNode = makeNode(dfBytes, data);
 	if (newNode == NULL){
 		return(NULL);
 	}
 
-	// Loop to top of list
-	while (list->cur->next != NULL){
-		list->cur = list->cur->next;
+	list->head = newNode;
+	newNode->next = oldHead;
+	return newNode;
+}
+
+// Insert a Node of given params after the tail of list
+Node* insertTail(LList* list, uint16_t dfBytes, uint8_t* data){
+	Node* newNode = makeNode(dfBytes, data);
+	if (newNode == NULL){
+		return(NULL);
 	}
-	list->cur->next = newNode;
+
+	list->tail->next = newNode;
+	list->tail = newNode;
 	return newNode;
 }
 
@@ -85,7 +95,7 @@ void freeList(LList* list){
 
 // Remove node from list. Returns 1 when nothing is freed, 0 on success
 int freeNode(LList* list, Node* node){
-	list->cur = list->head; // Go to start of list
+	Node* cur = list->head; // Go to start of list
 
 	// If removing head
 	if (list->head == node){
@@ -101,21 +111,21 @@ int freeNode(LList* list, Node* node){
 	}
 
 	do{
-		if (list->cur->next == node){
+		if (cur->next == node){
 			// Check if patching is necessary
-			if (list->cur->next->next != NULL){
-				list->cur->next = list->cur->next->next; // Patch
+			if (cur->next->next != NULL){
+				cur->next = cur->next->next; // Patch
 			}
 			else{
-				list->cur->next = NULL;
+				cur->next = NULL;
 			}
 			free(node);
 			return(0);
 		}
 		else {
-			list->cur = list->cur->next; // Continue to next node
+			cur = cur->next; // Continue to next node
 		}
-	} while (list->cur->next != NULL);
+	} while (cur->next != NULL);
 	return(1); // node does not exist in list
 }
 
@@ -126,19 +136,19 @@ int saveList(LList* list, char saveName[]){
 		fprintf(stderr, "ERROR: failed to save EntityList file @ saveList\n");
 		return(1);
 	}
-	list->cur = list->head; // Go to start of list
+	Node* cur = list->head; // Go to start of list
 
 	uint8_t reading = 1;
 	while (reading){
-		fwrite(&list->cur->dfBytes, sizeof(list->cur->dfBytes), 1, saveFile);
-		if (fwrite(list->cur->data, list->cur->dfBytes, 1, saveFile) != 1){
+		fwrite(&cur->dfBytes, sizeof(cur->dfBytes), 1, saveFile);
+		if (fwrite(cur->data, cur->dfBytes, 1, saveFile) != 1){
 			fprintf(stderr, "ERROR: failed to write to saveFile file @ saveList\n");
 			fclose(saveFile);
 			return(1);
 		}
 
-		if (list->cur->next != NULL){
-			list->cur = list->cur->next; // Continue to next node
+		if (cur->next != NULL){
+			cur = cur->next; // Continue to next node
 		}
 		else{
 			reading = 0;
@@ -189,7 +199,7 @@ LList* loadSave(char saveName[]){
 				newList = makeList(curDFBytes, curDataField);
 			}
 			else{
-				push(newList, curDFBytes, curDataField);
+				insertTail(newList, curDFBytes, curDataField);
 			}
 		}
 	}

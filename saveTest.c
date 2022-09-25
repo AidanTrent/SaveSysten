@@ -28,7 +28,7 @@ LList* populateSave(int nodes){
 				return(NULL);
 			}
 		}
-		else if (push(list, sizeof(TestData), raw) == NULL){
+		else if (insertTail(list, sizeof(TestData), raw) == NULL){
 			return(NULL);
 		}
 	}
@@ -50,8 +50,8 @@ int main(void){
 	list2 = loadSave("entityListTest.sav");
 	//freeList(list);
 
-	printf("%d\n", freeNode(list2, list->cur));
-	printf("%d\n", freeNode(list2, list2->cur));
+	//printf("%d\n", freeNode(list2, list->head));
+	//printf("%d\n", freeNode(list2, list2->head));
 	if (saveList(list2, "entityListTest2.sav") == 1){
 		return(EXIT_FAILURE);
 	}
