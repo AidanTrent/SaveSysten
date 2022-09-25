@@ -19,8 +19,10 @@ LList* makeList(uint16_t dfBytes, uint8_t* data);
 // Add a node of given params to top of list
 Node* push(LList* list, uint16_t dfBytes, uint8_t* data);
 
-// Remove node from list
-void freeNode(LList* list, Node* node);
+void freeList(LList* list);
+
+// Remove node from list. Returns 1 on failure, 0 success
+int freeNode(LList* list, Node* node);
 
 // Saves an EntityList as a binary file. Returns 1 on failure, 0 success
 int saveList(LList* list, char saveName[]);

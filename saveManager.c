@@ -75,22 +75,33 @@ Node* push(LList* list, uint16_t dfBytes, uint8_t* data){
 	return newNode;
 }
 
-// Remove node from list
-void freeNode(LList* list, Node* node){
+void freeList(LList* list){
+	Node* temp;
+	list->cur = list->head;
+
+	while (list->head != NULL){
+		temp = list->head;
+		list->head = list->head->next;
+		free(temp);
+	}
+}
+
+// Remove node from list. Returns 1 on failure, 0 success
+int freeNode(LList* list, Node* node){
 	uint8_t reading = 1;
 	list->cur = list->head; // Go to start of list
 
 	// If removing head
 	if (list->cur == node){
 		if (list->cur->next == NULL){
-			fprintf(stderr, "ERROR: Cannot free node when list has 1 node @ freeNode\n");
+			fprintf(stderr, "ERROR: Cannot free node when list has 1 node (do freeList) @ freeNode\n");
 		}
 		else{
 			list->cur = list->cur->next;
 			free(list->head);
 			list->head = list->cur;
 		}
-		reading = 0;
+		return(1);
 	}
 
 	while (reading){
@@ -111,6 +122,7 @@ void freeNode(LList* list, Node* node){
 			list->cur = list->cur->next; // Continue to next node
 		}
 	}
+	return(0);
 }
 
 // Saves an EntityList as a binary file. Returns 1 on failure, 0 success
