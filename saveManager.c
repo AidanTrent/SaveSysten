@@ -1,8 +1,8 @@
 /* Aidan Trent
  * For a save management system. Linked list capable of being saved and loaded
  * off of storage.
- * Limited to 65,535 nodes, easy as changing some data types if an increase is
- * needed though.
+ * Limited to 65,535 Kb nodes, easy as changing some data types if an increase
+ * is needed though.
  */
 
 #include <stdio.h>
