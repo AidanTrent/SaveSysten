@@ -23,8 +23,6 @@ typedef struct{
 	Node* cur;
 } LList;
 
-// TODO : a function to free the entire list
-
 // Do not define in header, only used by other saveManager functions
 Node* makeNode(uint16_t dfBytes, uint8_t* data){
 	uint8_t nodeHeaderSize = (sizeof(struct Node*) + sizeof(uint16_t)); // Size of next + dfBytes
@@ -77,7 +75,6 @@ Node* push(LList* list, uint16_t dfBytes, uint8_t* data){
 
 void freeList(LList* list){
 	Node* temp;
-	list->cur = list->head;
 
 	while (list->head != NULL){
 		temp = list->head;
@@ -86,27 +83,24 @@ void freeList(LList* list){
 	}
 }
 
-// Remove node from list. Returns 1 on failure, 0 success
+// Remove node from list. Returns 1 when nothing is freed, 0 on success
 int freeNode(LList* list, Node* node){
-	uint8_t reading = 1;
 	list->cur = list->head; // Go to start of list
 
 	// If removing head
-	if (list->cur == node){
-		if (list->cur->next == NULL){
+	if (list->head == node){
+		if (list->head->next == NULL){
 			fprintf(stderr, "ERROR: Cannot free node when list has 1 node (do freeList) @ freeNode\n");
+			return(1);
 		}
 		else{
-			list->cur = list->cur->next;
-			free(list->head);
-			list->head = list->cur;
+			list->head = list->head->next;
+			free(node);
+			return(0);
 		}
-		return(1);
 	}
 
-	while (reading){
-		// See if at end of list (or if only one node exists)
-		// Check if matching
+	do{
 		if (list->cur->next == node){
 			// Check if patching is necessary
 			if (list->cur->next->next != NULL){
@@ -115,17 +109,17 @@ int freeNode(LList* list, Node* node){
 			else{
 				list->cur->next = NULL;
 			}
-			free(list->cur->next);
-			reading = 0;
+			free(node);
+			return(0);
 		}
 		else {
 			list->cur = list->cur->next; // Continue to next node
 		}
-	}
-	return(0);
+	} while (list->cur->next != NULL);
+	return(1); // node does not exist in list
 }
 
-// Saves an EntityList as a binary file. Returns 1 on failure, 0 success
+// Saves an EntityList as a binary file. Returns 1 on failure, 0 on success
 int saveList(LList* list, char saveName[]){
 	FILE* saveFile = fopen(saveName, "wb");
 	if (saveFile == NULL){

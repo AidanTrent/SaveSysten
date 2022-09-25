@@ -45,11 +45,18 @@ int main(void){
 		return(EXIT_FAILURE);
 	}
 
+
 	LList* list2;
 	list2 = loadSave("entityListTest.sav");
+	//freeList(list);
+
+	printf("%d\n", freeNode(list2, list->cur));
+	printf("%d\n", freeNode(list2, list2->cur));
 	if (saveList(list2, "entityListTest2.sav") == 1){
 		return(EXIT_FAILURE);
 	}
+	freeList(list2);
+
 
 	return EXIT_SUCCESS;
 }

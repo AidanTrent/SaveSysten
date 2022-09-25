@@ -5,7 +5,7 @@
 typedef struct Node{
 	struct Node* next;
 	uint16_t dfBytes;
-	uint8_t data[];
+	uint8_t* data;
 } Node;
 
 typedef struct{
@@ -21,10 +21,10 @@ Node* push(LList* list, uint16_t dfBytes, uint8_t* data);
 
 void freeList(LList* list);
 
-// Remove node from list. Returns 1 on failure, 0 success
+// Remove node from list. Returns 1 when nothing is freed, 0 on success
 int freeNode(LList* list, Node* node);
 
-// Saves an EntityList as a binary file. Returns 1 on failure, 0 success
+// Saves an EntityList as a binary file. Returns 1 on failure, 0 on success
 int saveList(LList* list, char saveName[]);
 
 // Loads a saved EntityList from a file
