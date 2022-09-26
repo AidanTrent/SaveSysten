@@ -21,10 +21,10 @@ LList* populateSave(int nodes){
 	uint8_t* raw = malloc(sizeof(TestData));
 	TestData test;
 
-	for (int i = -20; i <= nodes; i++){
+	for (int i = 0; i < nodes; i++){
 		test.rep = '#';
-		test.y = i;
-		test.x = i;
+		test.y = i - 20;
+		test.x = i - 20;
 		test.state = 255;
 
 		memcpy(raw, &test, sizeof(TestData));
@@ -42,7 +42,7 @@ LList* populateSave(int nodes){
 }
 
 int main(void){
-	LList* list = populateSave(100);
+	LList* list = populateSave(3);
 	if (list == NULL){
 		return(EXIT_FAILURE);
 	}
@@ -54,13 +54,18 @@ int main(void){
 	LList* list2;
 	list2 = loadSave("entityListTest.sav");
 
+	printf("list2 data...\n");
 	TestData loadedStruct;
-	memcpy(&loadedStruct, list2->head->data, sizeof(TestData));
-	printf("list2 head data...\n");
-	printf("rep = %u\n", loadedStruct.rep);
-	printf("y = %" PRIu32 "\n", loadedStruct.y);
-	printf("x = %" PRIu32 "\n", loadedStruct.x);
-	printf("state = %" PRIu8 "\n\n", loadedStruct.state);
+	Node* cur = list2->head;
+	while(cur != NULL){
+		memcpy(&loadedStruct, cur->data, sizeof(TestData));
+		printf("rep = %c\n", loadedStruct.rep);
+		printf("y = %" PRId32 "\n", loadedStruct.y);
+		printf("x = %" PRId32 "\n", loadedStruct.x);
+		printf("state = %" PRIu8 "\n", loadedStruct.state);
+		cur = cur->next;
+	}
+	printf("\n");
 
 
 	if (saveList(list2, "entityListTest2.sav") == 1){
@@ -74,4 +79,5 @@ int main(void){
 
 	return EXIT_SUCCESS;
 }
+
 

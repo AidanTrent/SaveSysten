@@ -27,9 +27,10 @@ void freeList(LList* list);
 // Remove node from list. Returns 1 when nothing is freed, 0 on success
 int freeNode(LList* list, Node* node);
 
-// Saves an EntityList as a binary file. Returns 1 on failure, 0 on success
+// Saves an LList as a binary file. Returns 1 on failure, 0 on success
 int saveList(LList* list, char saveName[]);
 
-// Loads a saved EntityList from a file
+// Loads a saved LList from a file
 LList* loadSave(char saveName[]);
 #endif
+

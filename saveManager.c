@@ -129,11 +129,11 @@ int freeNode(LList* list, Node* node){
 	return(1); // node does not exist in list
 }
 
-// Saves an EntityList as a binary file. Returns 1 on failure, 0 on success
+// Saves an LList as a binary file. Returns 1 on failure, 0 on success
 int saveList(LList* list, char saveName[]){
 	FILE* saveFile = fopen(saveName, "wb");
 	if (saveFile == NULL){
-		fprintf(stderr, "ERROR: failed to save EntityList file @ saveList\n");
+		fprintf(stderr, "ERROR: failed to save LList file @ saveList\n");
 		return(1);
 	}
 	Node* cur = list->head; // Go to start of list
@@ -159,18 +159,18 @@ int saveList(LList* list, char saveName[]){
 	return(0);
 }
 
-// Loads a saved EntityList from a file
+// Loads a saved LList from a file
 LList* loadSave(char saveName[]){
 	LList* newList = NULL;
 
 	FILE* saveFile = fopen(saveName, "rb");
 	if (saveFile == NULL){
-		fprintf(stderr, "ERROR: failed to load EntityList file @ loadSave\n");
+		fprintf(stderr, "ERROR: failed to load LList file @ loadSave\n");
 		return(NULL);
 	}
 
 	uint16_t curDFBytes;
-	uint8_t* curDataField = NULL;
+	uint8_t* curDataField = malloc(curDFBytes);
 
 	uint8_t reading = 1;
 	while (reading){
@@ -185,7 +185,6 @@ LList* loadSave(char saveName[]){
 		}
 		// Read this node into memory
 		else {
-			curDataField = malloc(curDFBytes);
 			if (curDataField == NULL){
 				fprintf(stderr, "ERROR: malloc fail for curDataField @ loadSave\n");
 				return(NULL);
@@ -206,3 +205,4 @@ LList* loadSave(char saveName[]){
 
 	return newList;
 }
+
