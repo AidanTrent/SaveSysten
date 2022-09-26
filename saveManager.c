@@ -1,7 +1,7 @@
 /* Aidan Trent
  * For a save management system. Linked list capable of being saved and loaded
  * off of storage.
- * Limited to 65,535 Kb nodes, easy as changing some data types if an increase
+ * Limited to 65,535 KB nodes, easy as changing some data types if an increase
  * is needed though.
  */
 
@@ -25,7 +25,7 @@ typedef struct{
 
 // Do not define in header, only used by other saveManager functions
 Node* makeNode(uint16_t dfBytes, uint8_t* data){
-	uint8_t nodeHeaderSize = (sizeof(struct Node*) + sizeof(uint16_t)); // Size of next + dfBytes
+	uint8_t nodeHeaderSize = (sizeof(struct Node*) + sizeof(dfBytes));
 	Node* newNode = malloc(nodeHeaderSize + dfBytes);
 	if (newNode == NULL){
 		fprintf(stderr, "ERROR: malloc fail for newNode @ makeNode\n");
@@ -125,7 +125,7 @@ int freeNode(LList* list, Node* node){
 		else {
 			cur = cur->next; // Continue to next node
 		}
-	} while (cur->next != NULL);
+	} while (cur != NULL);
 	return(1); // node does not exist in list
 }
 
